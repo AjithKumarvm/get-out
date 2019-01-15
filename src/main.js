@@ -15,7 +15,7 @@ const AppNavigator = createStackNavigator({
     screen: Commit
   }
 }, {
-  initialRouteName: 'Dashboard'
+  initialRouteName: 'Voting'
 });
 
 export default createAppContainer(AppNavigator);
