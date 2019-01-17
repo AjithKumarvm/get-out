@@ -1,6 +1,9 @@
 import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Text, View } from 'react-native';
 import Card from '../../components/Cards'
+import { ACTIVITES } from '../../constants'
+import { connect } from 'react-redux'
+import { changeInterests } from '../../actions'
 
 const styles = StyleSheet.create({
   container:{
@@ -9,33 +12,35 @@ const styles = StyleSheet.create({
   }
 })
 
-const activities = [{
-  name: 'Trekking',
-  url: 'http://lorempixel.com/g/1440/900/'
-},
-{
-  name: 'Trip',
-  url: 'http://lorempixel.com/g/1440/900/'
-},
-{
-  name: 'Sports',
-  url: 'http://lorempixel.com/g/1440/900/'
-},
-{
-  name: 'Board Games',
-  url: 'http://lorempixel.com/g/1440/900/'
-}]
-class Voting extends React.Component {
+class Voting extends React.PureComponent {
   static navigationOptions = {
     title: 'Choose your interests',
   }
+  onCardPress = (name, add) => () => {
+    const {interestSelected} = this.props
+    interestSelected(name, add)
+  }
   render() {
+    const {userInterests} = this.props
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {activities.map(({name, url}) =>  <Card name={name} url={url} />)}
+        {ACTIVITES.map(({name, url}) => <TouchableOpacity onPress={this.onCardPress(name, !userInterests.includes(name))} key={name}>
+          <Card name={name} url={url} selected={userInterests.includes(name)} />
+        </TouchableOpacity>)}
       </ScrollView>
     );
   }
 }
 
-export default Voting
+
+export default connect(({ userInterests }) => {
+  return {
+    userInterests
+  }
+}, dispatch => {
+  return {
+    interestSelected: (interest, add) => {
+      dispatch(changeInterests(interest, add))
+    }
+  }
+})(Voting)

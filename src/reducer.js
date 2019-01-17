@@ -1,15 +1,16 @@
 import {
-  CHANGE_DATA
+  CHANGE_INTERESTS
 } from './constants'
 
 const defaultState = {
+  userInterests: []
 }
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
-    case CHANGE_DATA: {
+    case CHANGE_INTERESTS: {
       return {
         ...state,
-        data: action.data
+        userInterests: [...state.userInterests.filter(interest => interest !== action.interest), action.add ? action.interest : []]
       }
     }
     default:

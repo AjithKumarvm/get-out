@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native'
+import {checkForUserId} from '../../api'
 
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +29,14 @@ const styles = StyleSheet.create({
 class Dashboard extends React.Component {
   static navigationOptions = {
     title: 'Dashboard',
+  }
+  componentDidMount() {
+    checkForUserId((userId) => {
+      console.warn('userId', userId)
+      if(!userId) {
+        this.props.navigation.navigate('Register')
+      }
+    })
   }
   render () {
     return (

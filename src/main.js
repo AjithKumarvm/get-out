@@ -3,6 +3,7 @@ import { createStackNavigator, createAppContainer } from "react-navigation";
 import Dashboard from './pages/Dashboard'
 import Voting from './pages/Voting'
 import Commit from './pages/Commit'
+import Register from './pages/Register'
 
 const AppNavigator = createStackNavigator({
   Dashboard: {
@@ -13,9 +14,12 @@ const AppNavigator = createStackNavigator({
   },
   Commit: {
     screen: Commit
+  },
+  Register: {
+    screen: Register
   }
 }, {
-  initialRouteName: 'Voting'
+  initialRouteName: 'Dashboard'
 });
 
 export default createAppContainer(AppNavigator);

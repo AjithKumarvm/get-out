@@ -21,17 +21,16 @@ const styles = StyleSheet.create({
     height: cardHeight
   },
   textArea: {
-    backgroundColor: 'white',
     padding: 5
   }
 })
 
 class Card extends React.Component {
   render () {
-    const {name, url} = this.props
+    const {name, url, selected} = this.props
     return (
       <View style={styles.card}>
-        <View style={styles.content}>
+        <View style={{...styles.content, backgroundColor: selected ? '#0F0' : '#FFF'}}>
           <Image
             style={styles.image}
             source={{uri: url}}
