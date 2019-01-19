@@ -1,6 +1,7 @@
 import React from 'react';
-import { TextInput, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { TextInput, View, StyleSheet, TouchableOpacity, Text, ToastAndroid } from 'react-native';
 import { registerUser } from '../../api'
+import Button from '../../components/Button'
 
 const styles = StyleSheet.create({
   container: {
@@ -52,7 +53,13 @@ class Register extends React.Component {
     this.setState({loader: true})
     const {name, phone, houseId} = this.state
     registerUser({name, phone, houseId}, (success) => {
-      success && this.setState({loader: false})
+      if(success) {
+        this.setState({loader: false})
+        this.props.navigation.navigate('Dashboard')
+        ToastAndroid.show('Registered Successfully', ToastAndroid.SHORT);
+      } else {
+        ToastAndroid.show('Error. Please try again', ToastAndroid.SHORT);
+      }
     })
   }
   render() {
@@ -76,9 +83,7 @@ class Register extends React.Component {
           value={this.state.houseId}
           placeholder='House ID'
         />
-        <TouchableOpacity style={styles.button} onPress={this.onRegister}>
-          <Text style={styles.buttonText}>{this.state.loader ? '...' : 'SIGN UP'}</Text>
-        </TouchableOpacity>
+        <Button text={this.state.loader ? '...' : 'SIGN UP'} onPress={this.onRegister} />
       </View>
     );
   }

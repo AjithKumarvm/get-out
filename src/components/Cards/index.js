@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   }
 })
 
-class Card extends React.Component {
+class Card extends React.PureComponent {
   render () {
     const {name, url, selected} = this.props
     return (

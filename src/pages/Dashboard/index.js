@@ -1,6 +1,10 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native'
-import {checkForUserId} from '../../api'
+import { getAsync, getVotes } from '../../api'
+import { setLoader } from '../../actions'
+import Button from '../../components/Button'
+import InfoCard from '../../components/InfoCard'
 
 const styles = StyleSheet.create({
   container: {
@@ -22,34 +26,79 @@ const styles = StyleSheet.create({
     height: 40
   },
   section: {
-    flex: 1
+    flex: 1,
+    padding: 10
   }
 })
 
 class Dashboard extends React.Component {
   static navigationOptions = {
-    title: 'Dashboard',
+    title: 'Dashboard'
   }
-  componentDidMount() {
-    checkForUserId((userId) => {
-      console.warn('userId', userId)
-      if(!userId) {
+  componentDidMount () {
+    const { showLoader, checkVotes } = this.props
+    showLoader(true)
+    getAsync('userId', userId => {
+      if (!userId) {
         this.props.navigation.navigate('Register')
+        showLoader(false)
+      } else {
+        checkVotes()
       }
     })
   }
+  onResults = () => {
+    this.props.navigation.navigate('Results')
+  }
   render () {
+    const { votes, votingEnded, dashboard } = this.props
+    if (dashboard) {
+      return (
+        <View style={styles.container}>
+          <Text>Loading...</Text>
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
-        <View style={styles.section}></View>
-        <TouchableOpacity
-          style={styles.buttonArea}
-          title='Choose your interests'
-          onPress={() => this.props.navigation.navigate('Voting')}
-        ><Text style={styles.button}>Choose your interests</Text></TouchableOpacity>
+        <View style={styles.section}>
+          {votes && !votingEnded ? (
+            <InfoCard>You have already voted. Waiting for others</InfoCard>
+          ) : null}
+          {votingEnded ? (
+            <Button text='SEE RESULTS' onPress={this.onResults} />
+          ) : null}
+        </View>
+        {!votes ? (
+          <TouchableOpacity
+            style={styles.buttonArea}
+            title='Choose your interests'
+            onPress={() => this.props.navigation.navigate('Voting')}
+          >
+            <Text style={styles.button}>Choose your interests</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     )
   }
 }
 
-export default Dashboard
+const VisibleDashboard = connect(
+  ({ votes, votingEnded, loaders }) => ({
+    votes,
+    votingEnded,
+    dashboard: loaders.dashboard
+  }),
+  dispatch => ({
+    showLoader: value => {
+      dispatch(setLoader('dashboard', value))
+    },
+    checkVotes: () => {
+      getVotes(() => {
+        dispatch(setLoader('dashboard', false))
+      }, dispatch)
+    }
+  })
+)(Dashboard)
+
+export default VisibleDashboard
