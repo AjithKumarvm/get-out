@@ -29,7 +29,7 @@ class Results extends React.Component {
     }
     const results = curatedResults(votes)
     return results && results.length ? <View style={styles.container}>
-        {results.map((results) => <InfoCard key={results.interest.id}>{results.count} : {results.interest.name}</InfoCard>)}
+        {results.map((results) => <InfoCard key={results.interest.id}>{results.interest.name} {`(${results.count} person${results.count > 1 ? 's' : ''})`}</InfoCard>)}
       </View> : null
   }
 }

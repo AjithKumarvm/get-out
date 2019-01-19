@@ -28,6 +28,10 @@ const styles = StyleSheet.create({
   section: {
     flex: 1,
     padding: 10
+  },
+  message: {
+    marginTop: 20,
+    marginBottom: 10
   }
 })
 
@@ -65,9 +69,10 @@ class Dashboard extends React.Component {
           {votes && !votingEnded ? (
             <InfoCard>You have already voted. Waiting for others</InfoCard>
           ) : null}
-          {votingEnded ? (
+          {votingEnded ? <React.Fragment>
+            <View style={styles.message}><Text>Everybody has choosed their interests.</Text></View>
             <Button text='SEE RESULTS' onPress={this.onResults} />
-          ) : null}
+          </React.Fragment> : null}
         </View>
         {!votes ? (
           <TouchableOpacity
