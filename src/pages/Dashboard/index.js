@@ -64,11 +64,10 @@ class Dashboard extends React.Component {
         </View>
       )
     }
-    const allowVoting = votes && !votingEnded
     return (
       <View style={styles.container}>
         <View style={styles.section}>
-          {allowVoting ? (
+          {votes && !votingEnded ? (
             <InfoCard>You have already voted. Waiting for others</InfoCard>
           ) : null}
           {votingEnded ? <React.Fragment>
@@ -76,15 +75,13 @@ class Dashboard extends React.Component {
             <Button text='SEE RESULTS' onPress={this.onResults} />
           </React.Fragment> : null}
         </View>
-        {!allowVoting ? (
-          <TouchableOpacity
+        <TouchableOpacity
             style={styles.buttonArea}
             title='Choose your interests'
             onPress={() => this.props.navigation.navigate('Voting')}
           >
-            <Text style={styles.button}>Choose your interests</Text>
-          </TouchableOpacity>
-        ) : null}
+            <Text style={styles.button}>{`${votes ? 'Change' : 'Choose'} your interests`}</Text>
+        </TouchableOpacity>
       </View>
     )
   }
