@@ -2,7 +2,8 @@ import {
   CHANGE_INTERESTS,
   LOAD_USER_DATA,
   CHANGE_VOTES,
-  SET_LOADERS
+  SET_LOADERS,
+  roomMatesLimit
 } from './constants'
 
 const defaultState = {
@@ -29,7 +30,7 @@ const reducer = (state = defaultState, action) => {
       return {
         ...state,
         votes: action.votes,
-        votingEnded: Object.keys(action.votes).length >= 2
+        votingEnded: action.votes ? Object.keys(action.votes).length >= roomMatesLimit : false
       }
     }
     case SET_LOADERS: {

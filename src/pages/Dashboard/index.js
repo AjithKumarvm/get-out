@@ -40,6 +40,7 @@ class Dashboard extends React.Component {
     title: 'Dashboard'
   }
   componentDidMount () {
+    console.warn('dashboard mount')
     const { showLoader, checkVotes } = this.props
     showLoader(true)
     getAsync('userId', userId => {
@@ -63,10 +64,11 @@ class Dashboard extends React.Component {
         </View>
       )
     }
+    const allowVoting = votes && !votingEnded
     return (
       <View style={styles.container}>
         <View style={styles.section}>
-          {votes && !votingEnded ? (
+          {allowVoting ? (
             <InfoCard>You have already voted. Waiting for others</InfoCard>
           ) : null}
           {votingEnded ? <React.Fragment>
@@ -74,7 +76,7 @@ class Dashboard extends React.Component {
             <Button text='SEE RESULTS' onPress={this.onResults} />
           </React.Fragment> : null}
         </View>
-        {!votes ? (
+        {!allowVoting ? (
           <TouchableOpacity
             style={styles.buttonArea}
             title='Choose your interests'

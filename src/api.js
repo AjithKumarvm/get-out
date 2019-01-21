@@ -52,7 +52,7 @@ const getAsync = (key, callBack) => {
   _retrieveData()
 }
 
-const getUserInfo = (callBack) => {
+const getUserInfo = (callBack, dispatch) => {
   getAsync('userId', userId => {
     if (userId) {
       fetch(`https://getout-na123.firebaseio.com/users/${userId}.json`).then((response) => response.json())
@@ -72,7 +72,7 @@ const getUserInfo = (callBack) => {
   })
 }
 
-const submitVotes = (interests, callBack) => {
+const submitVotes = (interests, callBack, dispatch) => {
   getUserInfo((userData) => {
     if(userData) {
       const {houseId, userId} = userData
@@ -94,7 +94,7 @@ const submitVotes = (interests, callBack) => {
     } else {
       callBack(false)
     }
-  })
+  }, dispatch)
 }
 
 const getVotes = (callBack = () => {}, dispatch) => {
@@ -105,7 +105,7 @@ const getVotes = (callBack = () => {}, dispatch) => {
       .then((responseJson) => {
         dispatch(changeVotes(responseJson))
         callBack(responseJson)
-        console.log('getVotes', responseJson)
+        console.warn('getVotes', responseJson)
       })
       .catch((error) => {
         console.error(error);
@@ -128,6 +128,9 @@ const curatedResults = votes => {
     }
   })
   votes = _.reverse(_.sortBy(votes, 'count'))
+  votes = _.uniqBy(votes, function (e) {
+    return e.interest.id;
+  });
   return votes
 }
 

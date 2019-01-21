@@ -3,17 +3,16 @@ import { StyleSheet, ScrollView, TouchableOpacity, Text, View } from 'react-nati
 import Card from '../../components/Cards'
 import { ACTIVITES } from '../../constants'
 import { connect } from 'react-redux'
-import { changeInterests } from '../../actions'
+import { changeInterests, setLoader} from '../../actions'
 import Button from '../../components/Button'
-import {submitVotes, getVotes} from '../../api'
+import {submitVotes, getVotes, checkVotes} from '../../api'
 
 const buttonHeight = 50
 
 const styles = StyleSheet.create({
   container:{
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    flex: 1
+    flexWrap: 'wrap'
   },
   section: {
     flex: 1
@@ -22,7 +21,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
     maxHeight: buttonHeight
   },
   button: {
@@ -35,23 +33,21 @@ class Voting extends React.PureComponent {
   static navigationOptions = {
     title: 'Choose your interests',
   }
-  componentDidMount () {
-    
-  }
   onCardPress = (id, add) => () => {
     const {interestSelected} = this.props
     interestSelected(id, add)
   }
   onSubmit = () => {
+    this.props.showLoader(true)
     const {userInterests} = this.props
     submitVotes(userInterests, (success) => {
       if(success) {
-        this.props.navigation.navigate('Dashboard')
+        this.props.proceedToDashboard()
       }
     })
   }
   render() {
-    const {userInterests} = this.props
+    const {userInterests, loader} = this.props
     return (
       <View style={styles.section}>
         <ScrollView contentContainerStyle={styles.container}>
@@ -60,7 +56,7 @@ class Voting extends React.PureComponent {
           </TouchableOpacity>)}
         </ScrollView>
         <View style={styles.buttonArea}>
-          <Button text='SUBMIT' onPress={this.onSubmit} style={styles.button} />
+          {!loader ? <Button text='SUBMIT' onPress={this.onSubmit} style={styles.button} /> : null }
         </View>
       </View>
     );
@@ -68,14 +64,24 @@ class Voting extends React.PureComponent {
 }
 
 
-export default connect(({ userInterests }) => {
+export default connect(({ userInterests, loaders }) => {
   return {
-    userInterests
+    userInterests,
+    loader: loaders.voting
   }
-}, dispatch => {
+}, (dispatch, {navigation}) => {
   return {
     interestSelected: (id, add) => {
       dispatch(changeInterests(id, add))
+    },
+    proceedToDashboard: () => {
+      getVotes(() => {
+        dispatch(setLoader('voting', false))
+        navigation.navigate('Dashboard')
+      }, dispatch)
+    },
+    showLoader: (value) => {
+      dispatch(setLoader('voting', value))
     }
   }
 })(Voting)
